@@ -43,10 +43,9 @@ dependencies = [
 [[package]]
 name = "bls12_381"
 version = "0.8.0"
-source = "git+https://github.com/Wollac/bls12_381?branch=release%2Fv0.8.0#79f3c174f024f2dd5334739040b8d0933b670a84"
+source = "git+https://github.com/Wollac/bls12_381?branch=release%2Fv0.8.0#05b0e70c3a613fbb1a1fa6113d8974255fab5520"
 dependencies = [
  "bytemuck",
- "cfg-if",
  "ff",
  "group",
  "pairing",
@@ -66,9 +65,9 @@ dependencies = [
 
 [[package]]
 name = "bytemuck_derive"
-version = "1.8.1"
+version = "1.9.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fa76293b4f7bb636ab88fd78228235b5248b4d05cc589aed610f954af5d7c7a"
+checksum = "2ff22c2722516255d1823ce3cc4bc0b154dbc9364be5c905d6baa6eccbbc8774"
 dependencies = [
  "proc-macro2",
  "quote",

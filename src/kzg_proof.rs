@@ -390,50 +390,13 @@ impl KzgProof {
     }
 
     pub fn verify_kzg_proof_batch(
-        commitments: &[G1Affine],
-        zs: &[Scalar],
-        ys: &[Scalar],
-        proofs: &[G1Affine],
-        kzg_settings: &KzgSettings,
+        _commitments: &[G1Affine],
+        _zs: &[Scalar],
+        _ys: &[Scalar],
+        _proofs: &[G1Affine],
+        _kzg_settings: &KzgSettings,
     ) -> Result<bool, KzgError> {
-        let n = commitments.len();
-
-        // Initialize vectors to store intermediate values
-        let mut c_minus_y: Vec<G1Projective> = Vec::with_capacity(n);
-        let mut r_times_z: Vec<Scalar> = Vec::with_capacity(n);
-
-        // Compute r powers
-        let r_powers = compute_r_powers(commitments, zs, ys, proofs)?;
-
-        // Convert proofs to G1Projective
-        let proofs = proofs.iter().map(Into::into).collect::<Vec<_>>();
-
-        // Compute proof linear combination
-        let proof_lincomb = G1Projective::msm_variable_base(&proofs, &r_powers);
-
-        // Compute c_minus_y and r_times_z
-        for i in 0..n {
-            let ys_encrypted = G1Affine::generator() * ys[i];
-            c_minus_y.push(commitments[i] - ys_encrypted);
-            r_times_z.push(r_powers[i] * zs[i]);
-        }
-
-        // Compute proof_z_lincomb and c_minus_y_lincomb
-        let proof_z_lincomb = G1Projective::msm_variable_base(&proofs, &r_times_z);
-        let c_minus_y_lincomb = G1Projective::msm_variable_base(&c_minus_y, &r_powers);
-
-        // Compute rhs_g1
-        let rhs_g1 = c_minus_y_lincomb + proof_z_lincomb;
-
-        // Verify the pairing equation
-        let result = pairings_verify(
-            proof_lincomb.into(),
-            kzg_settings.g2_points[1],
-            rhs_g1.into(),
-            G2Affine::generator(),
-        );
-
-        Ok(result)
+        unimplemented!("batch verification is not supported");
     }
 
     pub fn verify_blob_kzg_proof(
