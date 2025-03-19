@@ -12,6 +12,7 @@ use crate::{
 use alloc::{string::ToString, vec::Vec};
 use bls12_381::{G1Affine, G1Projective, G2Affine, G2Projective, Scalar};
 use ff::derive::sbb;
+use hex_literal::hex;
 use sha2::{Digest, Sha256};
 
 pub fn safe_g1_affine_from_bytes(bytes: &Bytes48) -> Result<G1Affine, KzgError> {
@@ -481,6 +482,22 @@ impl KzgProof {
     }
 }
 
+pub fn point_evaluation() -> Result<bool, KzgError> {
+    // test data from: https://github.com/ethereum/c-kzg-4844/blob/main/tests/verify_kzg_proof/kzg-mainnet/verify_kzg_proof_case_correct_proof_31ebd010e6098750/data.yaml
+    const COMMITMENT: [u8; 48] = hex!("8f59a8d2a1a625a17f3fea0fe5eb8c896db3764f3185481bc22f91b4aaffcca25f26936857bc3a7c2539ea8ec3a952b7");
+    const Z: [u8; 32] = hex!("73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000000");
+    const Y: [u8; 32] = hex!("1522a4a7f34e1ea350ae07c29c96c7e79655aa926122e95fe69fcbd932ca49e9");
+    const PROOF: [u8; 48] = hex!("a62ad71d14c5719385c0686f1871430475bf3a00f0aa3f7b8dd99a9abc2160744faf0070725e00b60ad9a026a15b1a8c");
+
+    let commitment = Bytes48::from_slice(&COMMITMENT)?;
+    let z = Bytes32::from_slice(&Z)?;
+    let y = Bytes32::from_slice(&Y)?;
+    let proof = Bytes48::from_slice(&PROOF)?;
+    let kzg_settings = KzgSettings::load_trusted_setup_file()?;
+
+    KzgProof::verify_kzg_proof(&commitment, &z, &y, &proof, &kzg_settings)
+}
+
 #[cfg(test)]
 pub mod tests {
     use super::*;
@@ -488,6 +505,11 @@ pub mod tests {
         VERIFY_BLOB_KZG_PROOF_BATCH_TESTS, VERIFY_BLOB_KZG_PROOF_TESTS, VERIFY_KZG_PROOF_TESTS,
     };
     use serde_derive::Deserialize;
+
+    #[test]
+    pub fn test_point_evaluation() {
+        assert!(point_evaluation().expect("Invalid input data"));
+    }
 
     trait FromHex {
         fn from_hex(hex: &str) -> Result<Self, KzgError>
